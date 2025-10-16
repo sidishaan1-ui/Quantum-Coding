@@ -3,7 +3,7 @@ import numpy as np
 # Single-qubit gates
 H = (1/np.sqrt(2)) * np.array([[1, 1],
                                [1, -1]])
-I = np.eye(2)  # Identity matrix...
+I = np.eye(2)  # Identity matrix
 
 # Tensor (Kronecker) product for two qubits
 H_I = np.kron(H, I)  # Hadamard on first qubit only
@@ -25,3 +25,4 @@ after_CNOT = CNOT @ after_H
 
 print("After H⊗I:", after_H)
 print("After CNOT:", after_CNOT)
+...
