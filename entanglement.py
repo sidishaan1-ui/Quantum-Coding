@@ -25,3 +25,4 @@ after_CNOT = CNOT @ after_H
 
 print("After H⊗I:", after_H)
 print("After CNOT:", after_CNOT)
+...
