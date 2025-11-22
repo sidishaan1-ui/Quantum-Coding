@@ -42,6 +42,14 @@ def apply_hadamard_to_list(list):
     for i in range (len(list)):
         list[i] = H @ list[i]
     return list
+
+def test_if_unitary(matrix):
+    matrix_dagger = matrix
+    matrix[0][1], matrix[1][0] = matrix_dagger[1][0], matrix_dagger[0][1]
+    matrix_dagger = matrix_dagger.conj()
+    identity = matrix_dagger @ matrix
+    return identity
+    
 #-----------------------------------------------------------------------------------------------------
 # ========================= QFT on 3 Qubits (No Swaps) =========================
 # 
@@ -92,4 +100,14 @@ print("After R2 on matrixbinaryinputs[0]:\n", matrixbinaryinputs[0])
 matrixbinaryinputs[1] = apply_controlled_rotation(binaryinputs[2], matrixbinaryinputs[1], 1)
 print("After R2 on matrixbinaryinputs[1]:\n", matrixbinaryinputs[1])
 
-print(matrixbinaryinputs)
+print()
+for i in matrixbinaryinputs:
+    print(i)
+
+#Test if gates used
+for k in range(3):
+    phase = np.exp(2j * np.pi / (2**k))
+    U = np.array([[1, 0], 
+                [0, phase]])
+
+    print(test_if_unitary(U))
