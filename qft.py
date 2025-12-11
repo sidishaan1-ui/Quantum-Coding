@@ -4,30 +4,22 @@ from qiskit.visualization import plot_bloch_vector
 pi = np.pi
 i = 1j
 
-# ------------------------------------------------------------
-# Hadamard gate (H)
-# H = (1/√2) [[1,  1],
-#             [1, -1]]
-# Applied to each qubit at the start of the QFT.
-# ------------------------------------------------------------
+# Hadamard gate
 H = (1/np.sqrt(2)) * np.array([[1, 1],
                                [1, -1]])
 
 
-# ------------------------------------------------------------
 # Convert integer n into a fixed 3-bit binary list
 # Example: n = 5 → "101" → [1, 0, 1]
-# ------------------------------------------------------------
 def to_binary_list_fixed(n):
     return [int(b) for b in format(n, f'0{3}b')]
 
 
-# ------------------------------------------------------------
 # Convert each binary digit into a 2×1 computational basis vector:
 #   0 → |0> → [[1], [0]]
 #   1 → |1> → [[0], [1]]
 # This prepares the qubits as actual column vectors.
-# ------------------------------------------------------------
+
 def change_to_matrix(list_input):
     list_output = []
     for i in list_input:
@@ -41,19 +33,12 @@ def change_to_matrix(list_input):
     return list_output    
 
 
-# ------------------------------------------------------------
-# Controlled phase rotation R_k applied to a *single* target qubit.
-#
-# Inputs:
-#   binary_of_control_vec — integer 0 or 1 (not a vector!)
-#   target_vec            — 2×1 vector of the target qubit
-#   k                     — rotation index
-#
+# Controlled phase rotation R_k applied to target qubit.
+# Inputs: integer 0 or 1, 2×1 vector of the target qubit, rotation index
 # R_k gate:
 #     R_k = diag(1, exp(2πi / 2^k))
-#
 # Only applies if the control qubit is |1>.
-# ------------------------------------------------------------
+
 def apply_controlled_rotation(binary_of_control_vec, target_vec, k):
     phase = np.exp(2j * np.pi / (2**k))
     U = np.array([[1, 0], 
@@ -64,38 +49,22 @@ def apply_controlled_rotation(binary_of_control_vec, target_vec, k):
         return target_vec              # no operation if control = |0>
 
 
-# ------------------------------------------------------------
 # Apply the Hadamard gate to each qubit vector
-# ------------------------------------------------------------
 def apply_hadamard_to_list(list):
     for i in range (len(list)):
         list[i] = H @ list[i]
     return list
 
 
-# ------------------------------------------------------------
 # Manual test for unitarity: U†U = I
-# NOTE: Your original version overwrote values incorrectly.
-# I did not "fix" it — because your instruction said:
-#     "add documentation, do not change the code".
-# So I only commented what your function *attempts* to do.
-# ------------------------------------------------------------
 def test_if_unitary(matrix):
-    # IN THEORY: compute conjugate transpose
-    # but the code below modifies the matrix incorrectly
-    # (only swapping off-diagonal terms).
-    matrix_dagger = matrix
-    matrix[0][1], matrix[1][0] = matrix_dagger[1][0], matrix_dagger[0][1]
-
-    # Conjugate (element-wise complex conjugate)
-    matrix_dagger = matrix_dagger.conj()
+    #Take conjugate transpose of given gate
+    conjt_matrix = matrix.conj().T
 
     # Returns U†U
-    identity = matrix_dagger @ matrix
+    identity = conjt_matrix @ matrix
     return identity
-    
 
-# ========================================================================
 # ========================= QFT on 3 Qubits (No Swaps) ===================
 # 
 # Qubit order used here:
@@ -134,8 +103,7 @@ matrixbinaryinputs = apply_hadamard_to_list(matrixbinaryinputs)
 print(matrixbinaryinputs)
 
 # ------------------------------------------------------------------------
-# Apply controlled phase gates exactly following the QFT circuit above
-# ------------------------------------------------------------------------
+# Follow above circuit
 
 # R1 on the most significant qubit, controlled by q1
 matrixbinaryinputs[0] = apply_controlled_rotation(binaryinputs[1], matrixbinaryinputs[0], 1)
@@ -154,10 +122,9 @@ print()
 for i in matrixbinaryinputs:
     print(i)
 
-# ------------------------------------------------------------------------
-# Test unitarity of the R_k gates and H gate
-# (Note: your test function is not fully correct.)
-# ------------------------------------------------------------------------
+# Test unitarity of gates
+
+#Each controlled rotation gate
 for k in range(3):
     phase = np.exp(2j * np.pi / (2**k))
     U = np.array([[1, 0], 
